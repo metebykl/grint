@@ -1,27 +1,27 @@
-use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use toml::Value;
+use indexmap::IndexMap;
+use toml_edit::DocumentMut;
 
 use crate::Task;
 
 pub(crate) struct Grintfile {
-  pub(crate) tasks: HashMap<String, Task>,
+  pub(crate) tasks: IndexMap<String, Task>,
 }
 
 impl Grintfile {
   pub(crate) fn parse<P: AsRef<Path>>(path: P) -> Result<Self, Box<dyn std::error::Error>> {
-    let data = fs::read(path)?;
-    let parsed: Value = toml::from_slice(&data)?;
+    let data = fs::read_to_string(path)?;
+    let doc = data.parse::<DocumentMut>()?;
 
-    let mut tasks: HashMap<String, Task> = HashMap::new();
-    if let Some(table) = parsed.get("task").and_then(|v| v.as_table()) {
+    let mut tasks: IndexMap<String, Task> = IndexMap::new();
+    if let Some(table) = doc.get("task").and_then(|v| v.as_table()) {
       for (name, entry) in table.iter() {
         let body = entry
           .get("cmd")
           .and_then(|v| v.as_str())
-          .ok_or("Missing 'cmd'")?
+          .ok_or(format!("Missing cmd for task {}", name))?
           .to_string();
 
         let task = Task {
