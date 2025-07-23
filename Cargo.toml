@@ -1,8 +1,13 @@
 [package]
 name = "grint"
 version = "0.1.0"
-edition = "2024"
 autotests = false
+categories = ["command-line-utilities", "development-tools"]
+description = "Modern, declarative build tool"
+edition = "2024"
+homepage = "https://github.com/metebykl/grint"
+keywords = ["command-line", "task", "runner", "development"]
+repository = "https://github.com/metebykl/grint"
 
 [dependencies]
 clap = { version = "4.5.41", features = ["derive"] }
