@@ -43,3 +43,27 @@ fn list_tasks_multiple() {
     )
     .run();
 }
+
+#[test]
+fn list_tasks_description() {
+  Test::new()
+    .grintfile(
+      "
+    [task.test]
+    desc = \"Run tests\"
+    cmd = \"\"
+
+    [task.build]
+    desc = \"Build app\"
+    cmd = \"\"
+    ",
+    )
+    .arg("--list")
+    .stdout(
+      "Available tasks:
+  test   # Run tests
+  build  # Build app
+",
+    )
+    .run();
+}

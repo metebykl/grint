@@ -24,9 +24,17 @@ impl Subcommand {
   }
 
   fn list(config: &Config, grintfile: &Grintfile) -> Result<(), Box<dyn std::error::Error>> {
+    let max_name_width = grintfile.tasks.keys().map(|v| v.len()).max().unwrap_or(0);
+
     println!("Available tasks:");
-    for (name, _) in &grintfile.tasks {
-      println!("  {}", name);
+    for (name, task) in &grintfile.tasks {
+      print!("  {:<max_name_width$}", name);
+
+      if let Some(desc) = &task.desc {
+        println!("  # {}", desc);
+      } else {
+        println!();
+      }
     }
     Ok(())
   }

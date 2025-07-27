@@ -18,6 +18,11 @@ impl Grintfile {
     let mut tasks: IndexMap<String, Task> = IndexMap::new();
     if let Some(table) = doc.get("task").and_then(|v| v.as_table()) {
       for (name, entry) in table.iter() {
+        let desc = entry
+          .get("desc")
+          .and_then(|v| v.as_str())
+          .map(|s| s.to_string());
+
         let body = entry
           .get("cmd")
           .and_then(|v| v.as_str())
@@ -26,6 +31,7 @@ impl Grintfile {
 
         let task = Task {
           name: name.to_string(),
+          desc,
           body,
         };
 

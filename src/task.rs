@@ -1,5 +1,6 @@
 pub(crate) struct Task {
   pub(crate) name: String,
+  pub(crate) desc: Option<String>,
   pub(crate) body: String,
 }
 
