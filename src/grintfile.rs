@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use indexmap::IndexMap;
 use toml_edit::DocumentMut;
@@ -23,6 +23,11 @@ impl Grintfile {
           .and_then(|v| v.as_str())
           .map(|s| s.to_string());
 
+        let cwd = entry
+          .get("cwd")
+          .and_then(|v| v.as_str())
+          .map(|s| PathBuf::from(s));
+
         let body = entry
           .get("cmd")
           .and_then(|v| v.as_str())
@@ -31,6 +36,7 @@ impl Grintfile {
 
         let task = Task {
           name: name.to_string(),
+          cwd,
           desc,
           body,
         };
