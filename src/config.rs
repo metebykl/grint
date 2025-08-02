@@ -7,6 +7,8 @@ use crate::Subcommand;
 #[derive(Debug)]
 pub(crate) struct Config {
   pub(crate) grintfile: Option<PathBuf>,
+  pub(crate) shell: Option<String>,
+  pub(crate) shell_args: Option<Vec<String>>,
   pub(crate) subcommand: Subcommand,
 }
 
@@ -19,6 +21,8 @@ mod cmd {
 mod arg {
   pub(crate) const ARGUMENTS: &str = "ARGUMENTS";
   pub(crate) const GRINTFILE: &str = "GRINTFILE";
+  pub(crate) const SHELL: &str = "SHELL";
+  pub(crate) const SHELL_ARG: &str = "SHELL_ARG";
 }
 
 impl Config {
@@ -32,6 +36,19 @@ impl Config {
           .action(ArgAction::Set)
           .value_parser(value_parser!(PathBuf))
           .help("Use <GRINTFILE> as grintfile"),
+      )
+      .arg(
+        Arg::new(arg::SHELL)
+          .long("shell")
+          .action(ArgAction::Set)
+          .help("Invoke <SHELL> to run tasks"),
+      )
+      .arg(
+        Arg::new(arg::SHELL_ARG)
+          .long("shell-arg")
+          .action(ArgAction::Append)
+          .allow_hyphen_values(true)
+          .help("Invoke shell with <SHELL-ARG> as an argument"),
       )
       .arg(
         Arg::new(cmd::LIST)
@@ -68,6 +85,10 @@ impl Config {
 
     Ok(Self {
       grintfile: matches.get_one::<PathBuf>(arg::GRINTFILE).map(Into::into),
+      shell: matches.get_one::<String>(arg::SHELL).map(Into::into),
+      shell_args: matches
+        .get_many::<String>(arg::SHELL_ARG)
+        .map(|s| s.map(Into::into).collect()),
       subcommand,
     })
   }

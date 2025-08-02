@@ -44,6 +44,6 @@ impl Subcommand {
     grintfile: &Grintfile,
     arguments: &[String],
   ) -> Result<(), Box<dyn std::error::Error>> {
-    grintfile.run(arguments)
+    grintfile.run(config, arguments)
   }
 }

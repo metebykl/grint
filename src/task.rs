@@ -1,5 +1,6 @@
 use std::path::PathBuf;
-use std::process::Command;
+
+use crate::{Config, Grintfile};
 
 pub(crate) struct Task {
   pub(crate) name: String,
@@ -9,18 +10,15 @@ pub(crate) struct Task {
 }
 
 impl Task {
-  pub(crate) fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
+  pub(crate) fn run(
+    &self,
+    config: &Config,
+    grintfile: &Grintfile,
+  ) -> Result<(), Box<dyn std::error::Error>> {
     println!("> {}", self.body);
 
-    let mut command = if cfg!(target_os = "windows") {
-      let mut cmd = Command::new("cmd");
-      cmd.arg("/C").arg(&self.body);
-      cmd
-    } else {
-      let mut cmd = Command::new("sh");
-      cmd.arg("-c").arg(&self.body);
-      cmd
-    };
+    let mut command = grintfile.settings.shell_command(config);
+    command.arg(&self.body);
 
     if let Some(cwd) = &self.cwd {
       command.current_dir(cwd);
