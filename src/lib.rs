@@ -1,9 +1,12 @@
-pub(crate) use crate::{config::Config, grintfile::Grintfile, subcommand::Subcommand, task::Task};
+pub(crate) use crate::{
+  config::Config, grintfile::Grintfile, settings::Settings, subcommand::Subcommand, task::Task,
+};
 
 pub use crate::run::run;
 
 mod config;
 mod grintfile;
 mod run;
+mod settings;
 mod subcommand;
 mod task;

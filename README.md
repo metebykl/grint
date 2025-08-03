@@ -6,7 +6,29 @@
 
 ## Installation
 
-TODO
+### Prerequisites
+
+`grint` runs on any system with a Unix-like shell, including Linux and MacOS.
+
+#### Windows
+
+On Windows, `grint` uses PowerShell by default.
+
+If you'd prefer not use Powershell, `grint` also works with the `sh`
+provided by [Git Bash](https://git-scm.com), [Cygwin](https://www.cygwin.com)
+or [WSL](https://learn.microsoft.com/en-us/windows/wsl).
+
+If you're using Git Bash, Cygwin, or another POSIX-like environment on Windows
+and want to run your tasks using `sh`, you must explicitly set the shell:
+
+```sh
+grint --shell sh --shell-arg -cu
+```
+
+You can also configure `grint` to use any shell using command-line arguments. For example,
+to use the windows command prompt, launch `grint` with `--shell cmd.exe --shell-arg /C`.
+
+(PowerShell is the recommended shell for Windows users.)
 
 ## Quick Start
 

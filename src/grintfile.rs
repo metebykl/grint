@@ -4,9 +4,10 @@ use std::path::{Path, PathBuf};
 use indexmap::IndexMap;
 use toml_edit::DocumentMut;
 
-use crate::Task;
+use crate::{Config, Settings, Task};
 
 pub(crate) struct Grintfile {
+  pub(crate) settings: Settings,
   pub(crate) tasks: IndexMap<String, Task>,
 }
 
@@ -45,16 +46,23 @@ impl Grintfile {
       }
     }
 
-    Ok(Self { tasks })
+    Ok(Self {
+      settings: Settings::new(),
+      tasks,
+    })
   }
 
-  pub(crate) fn run(&self, arguments: &[String]) -> Result<(), Box<dyn std::error::Error>> {
+  pub(crate) fn run(
+    &self,
+    config: &Config,
+    arguments: &[String],
+  ) -> Result<(), Box<dyn std::error::Error>> {
     for name in arguments {
       self
         .tasks
         .get(name)
         .ok_or(format!("Task {} not found", name))?
-        .run()?;
+        .run(config, self)?;
     }
 
     Ok(())
