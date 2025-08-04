@@ -3,10 +3,11 @@ use std::path::PathBuf;
 use crate::{Config, Grintfile};
 
 pub(crate) struct Task {
-  pub(crate) name: String,
-  pub(crate) desc: Option<String>,
-  pub(crate) cwd: Option<PathBuf>,
   pub(crate) body: String,
+  pub(crate) dependencies: Vec<String>,
+  pub(crate) desc: Option<String>,
+  pub(crate) name: String,
+  pub(crate) working_directory: Option<PathBuf>,
 }
 
 impl Task {
@@ -20,8 +21,8 @@ impl Task {
     let mut command = grintfile.settings.shell_command(config);
     command.arg(&self.body);
 
-    if let Some(cwd) = &self.cwd {
-      command.current_dir(cwd);
+    if let Some(working_directory) = &self.working_directory {
+      command.current_dir(working_directory);
     }
 
     let status = command.status()?;
