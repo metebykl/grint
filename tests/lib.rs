@@ -11,4 +11,5 @@ mod tempdir;
 mod test;
 mod utils;
 
+mod dependencies;
 mod list;
