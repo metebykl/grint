@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use indexmap::IndexMap;
 use toml_edit::DocumentMut;
 
-use crate::{Config, Settings, Task};
+use crate::{Config, Error, Settings, Task};
 
 pub(crate) struct Grintfile {
   pub(crate) settings: Settings,
@@ -13,9 +13,17 @@ pub(crate) struct Grintfile {
 }
 
 impl Grintfile {
-  pub(crate) fn parse<P: AsRef<Path>>(path: P) -> Result<Self, Box<dyn std::error::Error>> {
-    let data = fs::read_to_string(path)?;
-    let doc = data.parse::<DocumentMut>()?;
+  pub(crate) fn parse(path: &Path) -> Result<Self, Error> {
+    let data = fs::read_to_string(path).map_err(|io_error| Error::Load {
+      path: path.to_owned(),
+      io_error,
+    })?;
+    let doc = data
+      .parse::<DocumentMut>()
+      .map_err(|toml_error| Error::Parse {
+        path: path.to_owned(),
+        toml_error,
+      })?;
 
     let mut tasks: IndexMap<String, Task> = IndexMap::new();
     if let Some(table) = doc.get("task").and_then(|v| v.as_table()) {
@@ -23,7 +31,9 @@ impl Grintfile {
         let body = entry
           .get("cmd")
           .and_then(|v| v.as_str())
-          .ok_or(format!("Missing cmd for task {}", name))?
+          .ok_or_else(|| Error::MissingCommand {
+            task_name: name.to_owned(),
+          })?
           .to_string();
 
         let dependencies: Vec<String> = entry
@@ -65,11 +75,7 @@ impl Grintfile {
     })
   }
 
-  pub(crate) fn run(
-    &self,
-    config: &Config,
-    arguments: &[String],
-  ) -> Result<(), Box<dyn std::error::Error>> {
+  pub(crate) fn run(&self, config: &Config, arguments: &[String]) -> Result<(), Error> {
     let mut ran = HashSet::new();
 
     for name in arguments {
@@ -87,22 +93,17 @@ impl Grintfile {
     name: &str,
     ran: &mut HashSet<String>,
     path: &mut Vec<String>,
-  ) -> Result<(), Box<dyn std::error::Error>> {
-    let task = self
-      .tasks
-      .get(name)
-      .ok_or_else(|| format!("task '{}' not found", name))?;
+  ) -> Result<(), Error> {
+    let task = self.tasks.get(name).ok_or_else(|| Error::MissingTask {
+      task_name: name.to_owned(),
+    })?;
 
     if let Some(cycle_start) = path.iter().position(|n| n == name) {
-      let cycle: Vec<&str> = path[cycle_start..].iter().map(|s| s.as_str()).collect();
-      return Err(
-        format!(
-          "dependency cycle detected: {} -> {}",
-          cycle.join(" -> "),
-          name
-        )
-        .into(),
-      );
+      let cycle: Vec<String> = path[cycle_start..].iter().map(|s| s.clone()).collect();
+      return Err(Error::DependencyCycle {
+        task_name: name.to_owned(),
+        cycle,
+      });
     }
 
     if ran.contains(name) {
