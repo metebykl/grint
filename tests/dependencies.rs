@@ -16,7 +16,7 @@ fn dependency_cycle_error() {
     )
     .arg("foo")
     .status(1)
-    .stderr("dependency cycle detected: foo -> bar -> foo\n")
+    .stderr("error: Dependency cycle detected: foo -> bar -> foo\n")
     .run();
 }
 
@@ -32,7 +32,7 @@ fn self_dependency_cycle_error() {
     )
     .arg("foo")
     .status(1)
-    .stderr("dependency cycle detected: foo -> foo\n")
+    .stderr("error: Dependency cycle detected: foo -> foo\n")
     .run();
 }
 
@@ -48,6 +48,6 @@ fn dependency_not_found_error() {
     )
     .arg("foo")
     .status(1)
-    .stderr("task 'bar' not found\n")
+    .stderr("error: Task `bar` not found\n")
     .run();
 }

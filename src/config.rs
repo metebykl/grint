@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::{Arg, ArgAction, ArgGroup, ArgMatches, Command, value_parser};
 
-use crate::Subcommand;
+use crate::{Error, Subcommand};
 
 #[derive(Debug)]
 pub(crate) struct Config {
@@ -67,7 +67,7 @@ impl Config {
       )
   }
 
-  pub(crate) fn from_matches(matches: &ArgMatches) -> Result<Self, Box<dyn std::error::Error>> {
+  pub(crate) fn from_matches(matches: &ArgMatches) -> Result<Self, Error> {
     let subcommand = if matches.get_flag(cmd::LIST) {
       Subcommand::List
     } else {

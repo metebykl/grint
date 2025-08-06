@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::{Config, Grintfile};
+use crate::{Config, Error, Grintfile};
 
 pub(crate) struct Task {
   pub(crate) body: String,
@@ -11,11 +11,7 @@ pub(crate) struct Task {
 }
 
 impl Task {
-  pub(crate) fn run(
-    &self,
-    config: &Config,
-    grintfile: &Grintfile,
-  ) -> Result<(), Box<dyn std::error::Error>> {
+  pub(crate) fn run(&self, config: &Config, grintfile: &Grintfile) -> Result<(), Error> {
     println!("> {}", self.body);
 
     let mut command = grintfile.settings.shell_command(config);
@@ -25,17 +21,16 @@ impl Task {
       command.current_dir(working_directory);
     }
 
-    let status = command.status()?;
+    let status = command.status().map_err(|io_error| Error::CommandInvoke {
+      command: self.body.clone(),
+      io_error,
+    })?;
 
     if !status.success() {
-      return Err(
-        format!(
-          "task '{}' failed with exit code {}",
-          self.name,
-          status.code().unwrap_or(1)
-        )
-        .into(),
-      );
+      return Err(Error::CommandStatus {
+        command: self.body.clone(),
+        status,
+      });
     }
 
     Ok(())

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::{Config, Grintfile};
+use crate::{Config, Error, Grintfile};
 
 #[derive(Debug)]
 pub(crate) enum Subcommand {
@@ -9,7 +9,7 @@ pub(crate) enum Subcommand {
 }
 
 impl Subcommand {
-  pub(crate) fn execute(&self, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
+  pub(crate) fn execute(&self, config: &Config) -> Result<(), Error> {
     let grintfile_path = match &config.grintfile {
       Some(g) => g.as_path(),
       None => Path::new("Grint.toml"),
@@ -23,7 +23,7 @@ impl Subcommand {
     }
   }
 
-  fn list(config: &Config, grintfile: &Grintfile) -> Result<(), Box<dyn std::error::Error>> {
+  fn list(config: &Config, grintfile: &Grintfile) -> Result<(), Error> {
     let max_name_width = grintfile.tasks.keys().map(|v| v.len()).max().unwrap_or(0);
 
     println!("Available tasks:");
@@ -39,11 +39,7 @@ impl Subcommand {
     Ok(())
   }
 
-  fn run(
-    config: &Config,
-    grintfile: &Grintfile,
-    arguments: &[String],
-  ) -> Result<(), Box<dyn std::error::Error>> {
+  fn run(config: &Config, grintfile: &Grintfile, arguments: &[String]) -> Result<(), Error> {
     grintfile.run(config, arguments)
   }
 }
