@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -52,6 +52,16 @@ impl Grintfile {
           .and_then(|v| v.as_str())
           .map(|s| s.to_string());
 
+        let env: HashMap<String, String> = entry
+          .get("env")
+          .and_then(|v| v.as_inline_table())
+          .map(|it| {
+            it.iter()
+              .filter_map(|(k, v)| v.as_str().map(|s| (k.to_string(), s.to_string())))
+              .collect()
+          })
+          .unwrap_or_else(HashMap::new);
+
         let working_directory = entry
           .get("cwd")
           .and_then(|v| v.as_str())
@@ -61,6 +71,7 @@ impl Grintfile {
           body,
           dependencies,
           desc,
+          env,
           name: name.to_string(),
           working_directory,
         };
