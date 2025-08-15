@@ -58,6 +58,7 @@ This is an example task!
 - [Working Directory](#working-directory)
 - [Task Descriptions](#task-descriptions)
 - [Dependencies](#dependencies)
+- [Environment Variables](#environment-variables)
 
 ### Listing Available Tasks
 
@@ -131,6 +132,23 @@ cmd = "./a.out --test"
 $ grint test
 > cc main.c
 > ./a.out --test
+```
+
+### Environment Variables
+
+You can set environment variables for specific tasks using the `env`
+attribute.
+
+```toml
+[task.name]
+env = { name = "grint" }
+cmd = "echo $name"
+```
+
+```console
+$ grint name
+> echo $name
+grint
 ```
 
 [🔼 Back to the top](#grint)
