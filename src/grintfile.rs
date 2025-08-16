@@ -62,17 +62,13 @@ impl Grintfile {
           })
           .unwrap_or_else(HashMap::new);
 
-        let working_directory = entry
-          .get("cwd")
-          .and_then(|v| v.as_str())
-          .map(|s| PathBuf::from(s));
+        let working_directory = entry.get("cwd").and_then(|v| v.as_str()).map(PathBuf::from);
 
         let task = Task {
           body,
           dependencies,
           desc,
           env,
-          name: name.to_string(),
           working_directory,
         };
 
@@ -110,7 +106,7 @@ impl Grintfile {
     })?;
 
     if let Some(cycle_start) = path.iter().position(|n| n == name) {
-      let cycle: Vec<String> = path[cycle_start..].iter().map(|s| s.clone()).collect();
+      let cycle: Vec<String> = path[cycle_start..].to_vec();
       return Err(Error::DependencyCycle {
         task_name: name.to_owned(),
         cycle,

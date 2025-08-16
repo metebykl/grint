@@ -18,12 +18,12 @@ impl Subcommand {
     let grintfile = Grintfile::parse(grintfile_path)?;
 
     match self {
-      Self::List => Self::list(config, &grintfile),
+      Self::List => Self::list(&grintfile),
       Self::Run { arguments } => Self::run(config, &grintfile, arguments),
     }
   }
 
-  fn list(config: &Config, grintfile: &Grintfile) -> Result<(), Error> {
+  fn list(grintfile: &Grintfile) -> Result<(), Error> {
     let max_name_width = grintfile.tasks.keys().map(|v| v.len()).max().unwrap_or(0);
 
     println!("Available tasks:");
