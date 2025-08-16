@@ -8,7 +8,6 @@ pub(crate) struct Task {
   pub(crate) dependencies: Vec<String>,
   pub(crate) desc: Option<String>,
   pub(crate) env: HashMap<String, String>,
-  pub(crate) name: String,
   pub(crate) working_directory: Option<PathBuf>,
 }
 
