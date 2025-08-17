@@ -1,3 +1,4 @@
+use std::ffi::OsString;
 use std::fmt::{Display, Formatter, Result};
 use std::io;
 use std::path::PathBuf;
@@ -12,6 +13,14 @@ pub(crate) enum Error {
   },
   CommandStatus {
     command: String,
+    status: ExitStatus,
+  },
+  EditorInvoke {
+    editor: OsString,
+    io_error: io::Error,
+  },
+  EditorStatus {
+    editor: OsString,
     status: ExitStatus,
   },
   DependencyCycle {
@@ -54,6 +63,14 @@ impl Display for Error {
           cycle.join(" -> "),
           task_name
         )?;
+      }
+      EditorInvoke { editor, io_error } => {
+        let editor = editor.to_string_lossy();
+        write!(f, "Editor `{editor}` invocation failed: {io_error}")?;
+      }
+      EditorStatus { editor, status } => {
+        let editor = editor.to_string_lossy();
+        write!(f, "Editor `{editor}` failed: {status}")?;
       }
       Load { path, io_error } => {
         write!(

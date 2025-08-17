@@ -13,9 +13,10 @@ pub(crate) struct Config {
 }
 
 mod cmd {
+  pub(crate) const EDIT: &str = "EDIT";
   pub(crate) const LIST: &str = "LIST";
 
-  pub(crate) const ALL: &[&str] = &[LIST];
+  pub(crate) const ALL: &[&str] = &[EDIT, LIST];
 }
 
 mod arg {
@@ -51,6 +52,13 @@ impl Config {
           .help("Invoke shell with <SHELL-ARG> as an argument"),
       )
       .arg(
+        Arg::new(cmd::EDIT)
+          .short('e')
+          .long("edit")
+          .action(ArgAction::SetTrue)
+          .help("Edit Grint.toml with editor given by $VISUAL or $EDIT, falls back to `vim`"),
+      )
+      .arg(
         Arg::new(cmd::LIST)
           .short('l')
           .long("list")
@@ -68,7 +76,9 @@ impl Config {
   }
 
   pub(crate) fn from_matches(matches: &ArgMatches) -> Result<Self, Error> {
-    let subcommand = if matches.get_flag(cmd::LIST) {
+    let subcommand = if matches.get_flag(cmd::EDIT) {
+      Subcommand::Edit
+    } else if matches.get_flag(cmd::LIST) {
       Subcommand::List
     } else {
       let mut arguments = Vec::new();

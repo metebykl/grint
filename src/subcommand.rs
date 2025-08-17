@@ -1,9 +1,12 @@
+use std::env;
 use std::path::Path;
+use std::process::Command;
 
 use crate::{Config, Error, Grintfile};
 
 #[derive(Debug)]
 pub(crate) enum Subcommand {
+  Edit,
   List,
   Run { arguments: Vec<String> },
 }
@@ -18,9 +21,27 @@ impl Subcommand {
     let grintfile = Grintfile::parse(grintfile_path)?;
 
     match self {
+      Self::Edit => Self::edit(grintfile_path),
       Self::List => Self::list(&grintfile),
       Self::Run { arguments } => Self::run(config, &grintfile, arguments),
     }
+  }
+
+  fn edit(grintfile_path: &Path) -> Result<(), Error> {
+    let editor = env::var_os("VISUAL")
+      .or_else(|| env::var_os("EDITOR"))
+      .unwrap_or_else(|| "vim".into());
+
+    let status = match Command::new(&editor).arg(grintfile_path).status() {
+      Ok(status) => status,
+      Err(io_error) => return Err(Error::EditorInvoke { editor, io_error }),
+    };
+
+    if !status.success() {
+      return Err(Error::EditorStatus { editor, status });
+    }
+
+    Ok(())
   }
 
   fn list(grintfile: &Grintfile) -> Result<(), Error> {
