@@ -31,7 +31,8 @@ with `--shell cmd.exe --shell-arg /C`.
 ## Quick Start
 
 See the [installation section](#installation) for how to install `grint` on
-your computer.
+your computer. Make sure that your installation is correct by running
+`grint --version`.
 
 Once `grint` is installed, create a file named `Grint.toml` in the root
 of your project with the following contents:
