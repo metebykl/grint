@@ -17,6 +17,7 @@ mod cmd {
   pub(crate) const LIST: &str = "LIST";
 
   pub(crate) const ALL: &[&str] = &[EDIT, LIST];
+  pub(crate) const HEADING: &str = "Commands";
 }
 
 mod arg {
@@ -28,8 +29,9 @@ mod arg {
 
 impl Config {
   pub(crate) fn app() -> Command {
-    Command::new("grint")
-      .about("Modern, declarative build tool")
+    Command::new(env!("CARGO_PKG_NAME"))
+      .version(env!("CARGO_PKG_VERSION"))
+      .about(env!("CARGO_PKG_DESCRIPTION"))
       .arg(
         Arg::new(arg::GRINTFILE)
           .short('f')
@@ -56,7 +58,8 @@ impl Config {
           .short('e')
           .long("edit")
           .action(ArgAction::SetTrue)
-          .help("Edit Grint.toml with editor given by $VISUAL or $EDIT, falls back to `vim`"),
+          .help("Edit Grint.toml with editor given by $VISUAL or $EDIT, falls back to `vim`")
+          .help_heading(cmd::HEADING),
       )
       .arg(
         Arg::new(cmd::LIST)
@@ -64,7 +67,8 @@ impl Config {
           .long("list")
           .action(ArgAction::SetTrue)
           .conflicts_with(arg::ARGUMENTS)
-          .help("List available tasks"),
+          .help("List available tasks")
+          .help_heading(cmd::HEADING),
       )
       .group(ArgGroup::new("SUBCOMMAND").args(cmd::ALL))
       .arg(
