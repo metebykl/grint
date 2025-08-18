@@ -15,8 +15,9 @@ pub(crate) struct Config {
 mod cmd {
   pub(crate) const EDIT: &str = "EDIT";
   pub(crate) const LIST: &str = "LIST";
+  pub(crate) const SHOW: &str = "SHOW";
 
-  pub(crate) const ALL: &[&str] = &[EDIT, LIST];
+  pub(crate) const ALL: &[&str] = &[EDIT, LIST, SHOW];
   pub(crate) const HEADING: &str = "Commands";
 }
 
@@ -70,6 +71,17 @@ impl Config {
           .help("List available tasks")
           .help_heading(cmd::HEADING),
       )
+      .arg(
+        Arg::new(cmd::SHOW)
+          .short('s')
+          .long("show")
+          .num_args(1)
+          .action(ArgAction::Set)
+          .value_name("TASK")
+          .conflicts_with(arg::ARGUMENTS)
+          .help("Show detailed information about <TASK>")
+          .help_heading(cmd::HEADING),
+      )
       .group(ArgGroup::new("SUBCOMMAND").args(cmd::ALL))
       .arg(
         Arg::new(arg::ARGUMENTS)
@@ -84,6 +96,8 @@ impl Config {
       Subcommand::Edit
     } else if matches.get_flag(cmd::LIST) {
       Subcommand::List
+    } else if let Some(task) = matches.get_one::<String>(cmd::SHOW) {
+      Subcommand::Show { task: task.into() }
     } else {
       let mut arguments = Vec::new();
       let values = matches.get_many::<String>(arg::ARGUMENTS);

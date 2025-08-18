@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::path::PathBuf;
 
 use crate::{Config, Error, Grintfile};
@@ -37,6 +38,29 @@ impl Task {
         status,
       });
     }
+
+    Ok(())
+  }
+}
+
+impl Display for Task {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    if let Some(desc) = &self.desc {
+      writeln!(f, "# {desc}")?;
+    }
+
+    if !self.dependencies.is_empty() {
+      for (i, dep) in self.dependencies.iter().enumerate() {
+        if i == 0 {
+          write!(f, "@{dep}")?;
+        } else {
+          write!(f, " @{dep}")?;
+        }
+      }
+      writeln!(f)?;
+    }
+
+    write!(f, "{}", self.body)?;
 
     Ok(())
   }

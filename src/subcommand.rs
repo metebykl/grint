@@ -9,6 +9,7 @@ pub(crate) enum Subcommand {
   Edit,
   List,
   Run { arguments: Vec<String> },
+  Show { task: String },
 }
 
 impl Subcommand {
@@ -24,6 +25,7 @@ impl Subcommand {
       Self::Edit => Self::edit(grintfile_path),
       Self::List => Self::list(&grintfile),
       Self::Run { arguments } => Self::run(config, &grintfile, arguments),
+      Self::Show { task } => Self::show(&grintfile, task),
     }
   }
 
@@ -57,10 +59,23 @@ impl Subcommand {
         println!();
       }
     }
+
     Ok(())
   }
 
   fn run(config: &Config, grintfile: &Grintfile, arguments: &[String]) -> Result<(), Error> {
     grintfile.run(config, arguments)
+  }
+
+  fn show(grintfile: &Grintfile, task: &str) -> Result<(), Error> {
+    let task = grintfile
+      .tasks
+      .get(task)
+      .ok_or_else(|| Error::UnknownTask {
+        task: task.to_owned(),
+      })?;
+
+    println!("{}", task);
+    Ok(())
   }
 }

@@ -32,7 +32,7 @@ impl Grintfile {
           .get("cmd")
           .and_then(|v| v.as_str())
           .ok_or_else(|| Error::MissingCommand {
-            task_name: name.to_owned(),
+            task: name.to_owned(),
           })?
           .to_string();
 
@@ -101,14 +101,14 @@ impl Grintfile {
     ran: &mut HashSet<String>,
     path: &mut Vec<String>,
   ) -> Result<(), Error> {
-    let task = self.tasks.get(name).ok_or_else(|| Error::MissingTask {
-      task_name: name.to_owned(),
+    let task = self.tasks.get(name).ok_or_else(|| Error::UnknownTask {
+      task: name.to_owned(),
     })?;
 
     if let Some(cycle_start) = path.iter().position(|n| n == name) {
       let cycle: Vec<String> = path[cycle_start..].to_vec();
       return Err(Error::DependencyCycle {
-        task_name: name.to_owned(),
+        task: name.to_owned(),
         cycle,
       });
     }
