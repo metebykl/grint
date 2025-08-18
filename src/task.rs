@@ -9,6 +9,7 @@ pub(crate) struct Task {
   pub(crate) dependencies: Vec<String>,
   pub(crate) desc: Option<String>,
   pub(crate) env: HashMap<String, String>,
+  pub(crate) name: String,
   pub(crate) working_directory: Option<PathBuf>,
 }
 
@@ -49,18 +50,16 @@ impl Display for Task {
       writeln!(f, "# {desc}")?;
     }
 
+    write!(f, "{}:", self.name)?;
+
     if !self.dependencies.is_empty() {
-      for (i, dep) in self.dependencies.iter().enumerate() {
-        if i == 0 {
-          write!(f, "@{dep}")?;
-        } else {
-          write!(f, " @{dep}")?;
-        }
+      for dependency in &self.dependencies {
+        write!(f, " @{dependency}")?;
       }
       writeln!(f)?;
     }
 
-    write!(f, "{}", self.body)?;
+    write!(f, "  {}", self.body)?;
 
     Ok(())
   }

@@ -69,6 +69,7 @@ impl Grintfile {
           dependencies,
           desc,
           env,
+          name: name.to_owned(),
           working_directory,
         };
 
