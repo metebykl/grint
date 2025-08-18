@@ -51,14 +51,11 @@ impl Display for Task {
     }
 
     write!(f, "{}:", self.name)?;
-
-    if !self.dependencies.is_empty() {
-      for dependency in &self.dependencies {
-        write!(f, " @{dependency}")?;
-      }
-      writeln!(f)?;
+    for dependency in &self.dependencies {
+      write!(f, " @{dependency}")?;
     }
 
+    writeln!(f)?;
     write!(f, "  {}", self.body)?;
 
     Ok(())
