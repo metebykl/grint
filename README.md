@@ -56,6 +56,7 @@ This is an example task!
 ## Features
 
 - [Listing Available Tasks](#listing-available-tasks)
+- [Showing Task Details](#showing-task-details)
 - [Working Directory](#working-directory)
 - [Task Descriptions](#task-descriptions)
 - [Dependencies](#dependencies)
@@ -71,6 +72,30 @@ Available tasks:
   lint
   test
   build
+```
+
+### Showing Task Details
+
+Task details can be inspected using `grint --show <TASK>`:
+
+```toml
+[task.lint]
+cmd = "cargo clippy"
+
+[task.test]
+cmd = "cargo test"
+
+[task.build]
+desc = "Build the application"
+deps = ["lint", "test"]
+cmd = "cargo build --release"
+```
+
+```console
+$ grint --show build
+# Build the application
+build: @lint @test
+  cargo build --release
 ```
 
 ### Working Directory
