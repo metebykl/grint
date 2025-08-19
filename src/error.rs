@@ -24,7 +24,7 @@ pub(crate) enum Error {
     status: ExitStatus,
   },
   DependencyCycle {
-    task_name: String,
+    task: String,
     cycle: Vec<String>,
   },
   Load {
@@ -32,14 +32,14 @@ pub(crate) enum Error {
     io_error: io::Error,
   },
   MissingCommand {
-    task_name: String,
-  },
-  MissingTask {
-    task_name: String,
+    task: String,
   },
   Parse {
     path: PathBuf,
     toml_error: TomlError,
+  },
+  UnknownTask {
+    task: String,
   },
 }
 
@@ -56,12 +56,11 @@ impl Display for Error {
       CommandStatus { command, status } => {
         write!(f, "Command {command} failed ({status})")?;
       }
-      DependencyCycle { task_name, cycle } => {
+      DependencyCycle { task, cycle } => {
         write!(
           f,
-          "Dependency cycle detected: {} -> {}",
-          cycle.join(" -> "),
-          task_name
+          "Dependency cycle detected: {} -> {task}",
+          cycle.join(" -> ")
         )?;
       }
       EditorInvoke { editor, io_error } => {
@@ -79,11 +78,8 @@ impl Display for Error {
           path.display()
         )?;
       }
-      MissingCommand { task_name } => {
-        write!(f, "Task `{task_name}` is missing required `cmd` attribute")?;
-      }
-      MissingTask { task_name } => {
-        write!(f, "Task `{task_name}` not found")?;
+      MissingCommand { task } => {
+        write!(f, "Task `{task}` is missing required `cmd` attribute")?;
       }
       Parse { path, toml_error } => {
         write!(
@@ -91,6 +87,9 @@ impl Display for Error {
           "Failed to parse Grint.toml at `{}`: {toml_error}",
           path.display()
         )?;
+      }
+      UnknownTask { task } => {
+        write!(f, "Task `{task}` not found")?;
       }
     }
 

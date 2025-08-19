@@ -5,14 +5,14 @@ fn dependency_cycle_error() {
   Test::new()
     .grintfile(
       r#"
-    [task.foo]
-    deps = ["bar"]
-    cmd = "echo FOO"
+      [task.foo]
+      deps = ["bar"]
+      cmd = "echo FOO"
 
-    [task.bar]
-    deps = ["foo"]
-    cmd = "echo BAR"
-    "#,
+      [task.bar]
+      deps = ["foo"]
+      cmd = "echo BAR"
+      "#,
     )
     .arg("foo")
     .status(1)
@@ -25,10 +25,10 @@ fn self_dependency_cycle_error() {
   Test::new()
     .grintfile(
       r#"
-    [task.foo]
-    deps = ["foo"]
-    cmd = "echo FOO"
-    "#,
+      [task.foo]
+      deps = ["foo"]
+      cmd = "echo FOO"
+      "#,
     )
     .arg("foo")
     .status(1)
@@ -41,10 +41,10 @@ fn dependency_not_found_error() {
   Test::new()
     .grintfile(
       r#"
-    [task.foo]
-    deps = ["bar"]
-    cmd = "echo FOO"
-    "#,
+      [task.foo]
+      deps = ["bar"]
+      cmd = "echo FOO"
+      "#,
     )
     .arg("foo")
     .status(1)

@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::path::PathBuf;
 
 use crate::{Config, Error, Grintfile};
@@ -8,6 +9,7 @@ pub(crate) struct Task {
   pub(crate) dependencies: Vec<String>,
   pub(crate) desc: Option<String>,
   pub(crate) env: HashMap<String, String>,
+  pub(crate) name: String,
   pub(crate) working_directory: Option<PathBuf>,
 }
 
@@ -37,6 +39,24 @@ impl Task {
         status,
       });
     }
+
+    Ok(())
+  }
+}
+
+impl Display for Task {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    if let Some(desc) = &self.desc {
+      writeln!(f, "# {desc}")?;
+    }
+
+    write!(f, "{}:", self.name)?;
+    for dependency in &self.dependencies {
+      write!(f, " @{dependency}")?;
+    }
+
+    writeln!(f)?;
+    write!(f, "  {}", self.body)?;
 
     Ok(())
   }
