@@ -19,3 +19,4 @@ mod utils;
 mod dependencies;
 mod edit;
 mod list;
+mod show;

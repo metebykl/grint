@@ -4,10 +4,10 @@ use super::*;
 fn list_tasks_single() {
   Test::new()
     .grintfile(
-      "
-    [task.build]
-    cmd = \"\"
-    ",
+      r#"
+      [task.build]
+      cmd = ""
+      "#,
     )
     .arg("--list")
     .stdout(
@@ -22,16 +22,16 @@ fn list_tasks_single() {
 fn list_tasks_multiple() {
   Test::new()
     .grintfile(
-      "
-    [task.foo]
-    cmd = \"\"
+      r#"
+      [task.foo]
+      cmd = ""
+      
+      [task.bar]
+      cmd = ""
 
-    [task.bar]
-    cmd = \"\"
-
-    [task.baz]
-    cmd = \"\"
-    ",
+      [task.baz]
+      cmd = ""
+      "#,
     )
     .arg("--list")
     .stdout(
@@ -48,15 +48,15 @@ fn list_tasks_multiple() {
 fn list_tasks_description() {
   Test::new()
     .grintfile(
-      "
-    [task.test]
-    desc = \"Run tests\"
-    cmd = \"\"
+      r#"
+      [task.test]
+      desc = "Run tests"
+      cmd = ""
 
-    [task.build]
-    desc = \"Build app\"
-    cmd = \"\"
-    ",
+      [task.build]
+      desc = "Build app"
+      cmd = ""
+      "#,
     )
     .arg("--list")
     .stdout(
