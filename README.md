@@ -61,6 +61,7 @@ This is an example task!
 - [Task Descriptions](#task-descriptions)
 - [Dependencies](#dependencies)
 - [Environment Variables](#environment-variables)
+- [Execution Control](#execution-control)
 
 ### Listing Available Tasks
 
@@ -175,6 +176,17 @@ cmd = "echo $name"
 $ grint name
 > echo $name
 grint
+```
+
+### Execution Control
+
+#### `-n, --dry`
+
+Print tasks without executing them.
+
+```console
+$ grint example --dry
+> echo 'This is an example task!'
 ```
 
 [🔼 Back to the top](#grint)

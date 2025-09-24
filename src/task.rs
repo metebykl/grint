@@ -17,6 +17,10 @@ impl Task {
   pub(crate) fn run(&self, config: &Config, grintfile: &Grintfile) -> Result<(), Error> {
     println!("> {}", self.body);
 
+    if config.dry {
+      return Ok(());
+    }
+
     let mut command = grintfile.settings.shell_command(config);
     command.arg(&self.body);
 

@@ -6,6 +6,7 @@ use crate::{Error, Subcommand};
 
 #[derive(Debug)]
 pub(crate) struct Config {
+  pub(crate) dry: bool,
   pub(crate) grintfile: Option<PathBuf>,
   pub(crate) shell: Option<String>,
   pub(crate) shell_args: Option<Vec<String>>,
@@ -23,6 +24,7 @@ mod cmd {
 
 mod arg {
   pub(crate) const ARGUMENTS: &str = "ARGUMENTS";
+  pub(crate) const DRY: &str = "DRY";
   pub(crate) const GRINTFILE: &str = "GRINTFILE";
   pub(crate) const SHELL: &str = "SHELL";
   pub(crate) const SHELL_ARG: &str = "SHELL_ARG";
@@ -33,6 +35,13 @@ impl Config {
     Command::new(env!("CARGO_PKG_NAME"))
       .version(env!("CARGO_PKG_VERSION"))
       .about(env!("CARGO_PKG_DESCRIPTION"))
+      .arg(
+        Arg::new(arg::DRY)
+          .short('n')
+          .long("dry")
+          .action(ArgAction::SetTrue)
+          .help("Print tasks without executing them"),
+      )
       .arg(
         Arg::new(arg::GRINTFILE)
           .short('f')
@@ -112,6 +121,7 @@ impl Config {
     };
 
     Ok(Self {
+      dry: matches.get_flag(arg::DRY),
       grintfile: matches.get_one::<PathBuf>(arg::GRINTFILE).map(Into::into),
       shell: matches.get_one::<String>(arg::SHELL).map(Into::into),
       shell_args: matches
