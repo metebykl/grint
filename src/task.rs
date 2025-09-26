@@ -15,7 +15,9 @@ pub(crate) struct Task {
 
 impl Task {
   pub(crate) fn run(&self, config: &Config, grintfile: &Grintfile) -> Result<(), Error> {
-    println!("> {}", self.body);
+    if !config.quiet {
+      println!("> {}", self.body);
+    }
 
     if config.dry {
       return Ok(());
