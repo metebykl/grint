@@ -8,6 +8,7 @@ use crate::{Error, Subcommand};
 pub(crate) struct Config {
   pub(crate) dry: bool,
   pub(crate) grintfile: Option<PathBuf>,
+  pub(crate) quiet: bool,
   pub(crate) shell: Option<String>,
   pub(crate) shell_args: Option<Vec<String>>,
   pub(crate) subcommand: Subcommand,
@@ -26,6 +27,7 @@ mod arg {
   pub(crate) const ARGUMENTS: &str = "ARGUMENTS";
   pub(crate) const DRY: &str = "DRY";
   pub(crate) const GRINTFILE: &str = "GRINTFILE";
+  pub(crate) const QUIET: &str = "QUIET";
   pub(crate) const SHELL: &str = "SHELL";
   pub(crate) const SHELL_ARG: &str = "SHELL_ARG";
 }
@@ -49,6 +51,14 @@ impl Config {
           .action(ArgAction::Set)
           .value_parser(value_parser!(PathBuf))
           .help("Use <GRINTFILE> as grintfile"),
+      )
+      .arg(
+        Arg::new(arg::QUIET)
+          .short('q')
+          .long("quiet")
+          .action(ArgAction::SetTrue)
+          .help("Disable command echoing")
+          .conflicts_with(arg::DRY),
       )
       .arg(
         Arg::new(arg::SHELL)
@@ -123,6 +133,7 @@ impl Config {
     Ok(Self {
       dry: matches.get_flag(arg::DRY),
       grintfile: matches.get_one::<PathBuf>(arg::GRINTFILE).map(Into::into),
+      quiet: matches.get_flag(arg::QUIET),
       shell: matches.get_one::<String>(arg::SHELL).map(Into::into),
       shell_args: matches
         .get_many::<String>(arg::SHELL_ARG)
