@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/metebykl/grint/releases/tag/v0.5.0) - 2025-09-29
+
+### Added
+
+- Add dry run mode ([#20](https://github.com/metebykl/grint/pull/20))
+- Add quiet mode ([#21](https://github.com/metebykl/grint/pull/21))
+
 ## [0.4.0](https://github.com/metebykl/grint/releases/tag/v0.4.0) - 2025-08-19
 
 ### Added
